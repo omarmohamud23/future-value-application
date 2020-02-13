@@ -75,7 +75,7 @@
             this.label4.Size = new System.Drawing.Size(64, 13);
             this.label4.TabIndex = 3;
             this.label4.Text = "future Value";
-            this.label4.Click += new System.EventHandler(this.label4_Click);
+           
             // 
             // txtMonthlyIvestment
             // 
@@ -108,7 +108,7 @@
             this.txtInterestRate.Name = "txtInterestRate";
             this.txtInterestRate.Size = new System.Drawing.Size(100, 20);
             this.txtInterestRate.TabIndex = 7;
-            this.txtInterestRate.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
+         
             this.txtInterestRate.DoubleClick += new System.EventHandler(this.txtInterestRate_DoubleClick);
             // 
             // btnCalculate
