@@ -21,23 +21,120 @@ namespace future_value_application
 
         private void btnCalculate_Click(object sender, EventArgs e)
         {
-            decimal monthlyInvestment =
-                Convert.ToDecimal(txtMonthlyIvestment.Text);
-            decimal yearlyInterestRate = Convert.ToDecimal(txtInterestRate.Text);
-            int years = Convert.ToInt32(txtYears.Text);
 
-            int months = years * 12;
-            decimal monthlyInterestRate = yearlyInterestRate / 12 / 100;
+            try
+            {
+                if (IsValidData())
+                {
+                    decimal monthlyInvestment =
+                        Convert.ToDecimal(txtMonthlyIvestment.Text);
+                    decimal yearlyInterestRate =
+                        Convert.ToDecimal(txtInterestRate.Text);
+                    int years = Convert.ToInt32(txtYears.Text);
 
-            decimal futurevalue = CalculateFuturevalue(monthlyInvestment, months, monthlyInterestRate);
+                    
+                    decimal monthlyInterestRate = yearlyInterestRate / 12 / 100;
+                    int months = years * 12;
 
-            txtFutureValue.Text = futurevalue.ToString("C");
-            txtMonthlyIvestment.Focus();
+                    decimal futureValue = CalculateFuturevalue(
+                        monthlyInvestment, monthlyInterestRate, months);
+                    txtFutureValue.Text = futureValue.ToString("c");
+                    txtMonthlyIvestment.Focus();
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Invalid numeric format. Please check all entries. Entry Error");
+            }
+            catch (OverflowException)
+            {
+                MessageBox.Show("Overflow error. Please enter smaller values. Entry Error");
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message, ex.GetType().ToString());
+            }
+         
+
         }
 
-       
 
-        private decimal CalculateFuturevalue(decimal monthlyInvestment,  int months, decimal monthlyInterestRate)
+        public bool IsValidData() //creating generic validation method called IsValidData
+        {
+            return
+                // Validate the Monthly Investment text box
+                IsPresent(txtMonthlyIvestment, "Monthly Investment") &&
+                IsDecimal(txtMonthlyIvestment, "Monthly Investment") &&
+                IsWithinRange(txtMonthlyIvestment, "Monthly Investment", 1, 1000) &&
+
+                // Validate the Yearly Interest Rate text box
+                IsPresent(txtInterestRate, "Yearly Interest Rate") &&
+                IsDecimal(txtInterestRate, "Yearly Interest Rate") &&
+                IsWithinRange(txtInterestRate, "Yearly Interest Rate", 1, 20) &&
+
+                // Validate the Number of Years text box
+                IsPresent(txtYears, "Number of Years") &&
+                IsInt32(txtYears, "Number of Years") &&
+                IsWithinRange(txtYears, "Number of Years", 1, 40);
+        }
+
+        public bool IsPresent(TextBox textBox, string name) //creating generic validation method called ISpresent 
+        {
+            if (textBox.Text == "")
+            {
+                MessageBox.Show(name + " is a required field.", "Entry Error");
+                textBox.Focus();
+                return false;
+            }
+            return true;
+        }
+
+        public bool IsDecimal(TextBox textBox, string name) //creating generic validation method called isdecimal
+        {
+            decimal number = 0m;
+            if (Decimal.TryParse(textBox.Text, out number))
+            {
+                return true;
+            }
+            else
+            {
+                MessageBox.Show(name + " must be a decimal value.", "Entry Error");
+                textBox.Focus();
+                return false;
+            }
+        }
+
+        public bool IsInt32(TextBox textBox, string name) //creating generic validation method isint32
+        {
+            int number = 0;
+            if (Int32.TryParse(textBox.Text, out number))
+            {
+                return true;
+            }
+            else
+            {
+                MessageBox.Show(name + " must be an integer.", "Entry Error");
+                textBox.Focus();
+                return false;
+            }
+        }
+
+        public bool IsWithinRange(TextBox textBox, string name, //creating generic validation method 
+            decimal min, decimal max)
+        {
+            decimal number = Convert.ToDecimal(textBox.Text);
+            if (number < min || number > max)
+            {
+                MessageBox.Show(name + " must be between " + min
+                    + " and " + max + ".", "Entry Error");
+                textBox.Focus();
+                return false;
+            }
+            return true;
+        }
+
+
+        private decimal CalculateFuturevalue(decimal monthlyInvestment,  decimal monthlyInterestRate, int months)
         {
             decimal futureValue = 0m;
             for (int i = 0; i < months; i++)
@@ -52,11 +149,7 @@ namespace future_value_application
       
 
        
-        private void btnExit_Click_1(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
+      
         private void ClearFutureValue(object sender, EventArgs e)
         {
             txtFutureValue.Text = "";
@@ -76,6 +169,11 @@ namespace future_value_application
         private void txtInterestRate_DoubleClick(object sender, EventArgs e)
         {
             txtInterestRate.Text = "12";
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
